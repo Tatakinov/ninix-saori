@@ -8,7 +8,7 @@ ninix-kagariで使うことの出来るSAORIコレクションです。
 
 ```
 make
-cp lib*.so /path/to/ninix-kagari/lib/saori/
+make install
 ```
 
 ## Make new saori in posix
