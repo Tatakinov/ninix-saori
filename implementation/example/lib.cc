@@ -7,7 +7,7 @@
 class Example : public Saori {
     public:
         saori::Response request(saori::Request req) override {
-            if (req(0)) {
+            if (!req(0)) {
                 saori::Response res {204, "No Content"};
                 return res;
             }
