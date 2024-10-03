@@ -1,8 +1,6 @@
 #ifndef HEADER_H_
 #define HEADER_H_
 
-#include <memory>
-
 #include "plugin.h"
 #include "saori.h"
 #include "shiori.h"

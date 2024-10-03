@@ -66,6 +66,6 @@ size_t write(char *buf, size_t size, size_t nmemb, void *userdata) {
     return size * nmemb;
 }
 
-std::shared_ptr<Saori> create() {
-    return std::make_shared<Curl>();
+std::unique_ptr<Saori> create() {
+    return std::make_unique<Curl>();
 }

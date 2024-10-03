@@ -2,6 +2,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -10,10 +11,10 @@
 #define HELPER(a, b) a ## b
 #define FUNC(a, b) HELPER(a, b)
 
-std::shared_ptr<Saori> create();
+std::unique_ptr<Saori> create();
 
 namespace {
-    std::unordered_map<int, std::shared_ptr<Saori>> map;
+    std::unordered_map<int, std::unique_ptr<Saori>> map;
     const long kInstanceMax = 1024;
 };
 

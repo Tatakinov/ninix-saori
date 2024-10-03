@@ -13,6 +13,6 @@ class Test : public Saori {
         }
 };
 
-std::shared_ptr<Saori> create() {
-    return std::make_shared<Test>();
+std::unique_ptr<Saori> create() {
+    return std::make_unique<Test>();
 }
