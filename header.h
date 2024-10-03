@@ -8,18 +8,20 @@
 #include "shiori.h"
 #include "sstp.h"
 
-class Saori {
+template<class T, class U>
+class Library {
     public:
-        Saori() {}
-        virtual ~Saori() {}
+        Library() {}
+        virtual ~Library() {}
         virtual bool load(std::string path) { return true; }
-        virtual std::string request(saori::Request req) {
-            saori::Response res {204, "No Content"};
+        virtual U request(T req) {
+            U res {204, "No Content"};
             return res;
         }
         virtual bool unload() { return true; }
 };
 
-std::shared_ptr<Saori> create();
+using Saori = Library<saori::Request, saori::Response>;
+using Plugin = Library<plugin::Request, plugin::Response>;
 
 #endif // HEADER_H_

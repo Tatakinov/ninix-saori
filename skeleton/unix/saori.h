@@ -1,5 +1,5 @@
-#ifndef UNIX_LIB_H_
-#define UNIX_LIB_H_
+#ifndef UNIX_SAORI_H_
+#define UNIX_SAORI_H_
 
 #ifndef LIBRARY_NAME
 #error "define LIBRARY_NAME"
@@ -24,4 +24,4 @@ char *FUNC(LIBRARY_NAME, _multi_request)(long id, char *request, long *len);
 
 #endif // __cplusplus
 
-#endif // UNIX_LIB_H_
+#endif // UNIX_SAORI_H_

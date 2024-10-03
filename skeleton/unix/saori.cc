@@ -1,4 +1,4 @@
-#include "unix/lib.h"
+#include "unix/saori.h"
 
 #include <cstdlib>
 #include <cstring>
@@ -9,6 +9,8 @@
 
 #define HELPER(a, b) a ## b
 #define FUNC(a, b) HELPER(a, b)
+
+std::shared_ptr<Saori> create();
 
 namespace {
     std::unordered_map<int, std::shared_ptr<Saori>> map;
@@ -54,6 +56,5 @@ char *FUNC(LIBRARY_NAME, _multi_request)(long id, char *request, long *len) {
     return strdup(res.c_str());
 }
 
-#undef LOAD
-#undef UNLOAD
-#undef REQUEST
+#undef HELPER
+#undef FUNC

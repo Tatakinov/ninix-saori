@@ -1,6 +1,6 @@
 #define LIBRARY_NAME saori_curl
 
-#include "skeleton/unix/lib.cc"
+#include "skeleton/unix/saori.cc"
 
 #include <algorithm>
 #include <curl/curl.h>
@@ -14,7 +14,7 @@ class Curl : public Saori {
         std::string buffer_;
 
     public:
-        std::string request(saori::Request req) override {
+        saori::Response request(saori::Request req) override {
             if (!req(0)) {
                 saori::Response res {204, "No Content"};
                 return res;
