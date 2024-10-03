@@ -9,6 +9,7 @@ class Test : public Saori {
         saori::Response request(saori::Request req) override {
             saori::Response res {200, "OK"};
             res() = "test";
+            res(0) = 1;
             return res;
         }
 };
