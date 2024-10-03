@@ -1,19 +1,23 @@
 // *必ず*ユニークなSAORI名を定義する
-#define LIBRARY_NAME test
+#define LIBRARY_NAME example
 
 // includeするのは.hじゃなくて.cc。
 #include "skeleton/unix/saori.cc"
 
-class Test : public Saori {
+class Example : public Saori {
     public:
         saori::Response request(saori::Request req) override {
+            if (req(0)) {
+                saori::Response res {204, "No Content"};
+                return res;
+            }
             saori::Response res {200, "OK"};
-            res() = "test";
-            res(0) = 1;
+            res() = "This is example.";
+            res(0) = req(0).value();
             return res;
         }
 };
 
 std::unique_ptr<Saori> create() {
-    return std::make_unique<Test>();
+    return std::make_unique<Example>();
 }

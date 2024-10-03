@@ -4,7 +4,7 @@ LD					= clang++
 LDFLAGS			= -shared
 OBJS				= foo.o
 SKELETON_OBJS	= skeleton/base/header.o
-TEST_OBJS		= implementation/test/lib.o
+EXAMPLE_OBJS		= implementation/example/lib.o
 CURL_OBJS		= implementation/saori_curl/lib.o
 ALL					= all
 
@@ -13,12 +13,12 @@ PREFIX=/opt/ninix-kagari/lib/saori/
 .SUFFIXES: .cc .o
 
 .PHONY: all
-$(ALL): libtest.so libsaori_curl.so
+$(ALL): libexample.so libsaori_curl.so
 
-libtest.so: $(SKELETON_OBJS) $(TEST_OBJS)
-	$(LD) $(LDFLAGS) -o libtest.so $(TEST_OBJS) $(SKELETON_OBJS)
+libexample.so: $(SKELETON_OBJS) $(EXAMPLE_OBJS)
+	$(LD) $(LDFLAGS) -o libexample.so $(EXAMPLE_OBJS) $(SKELETON_OBJS)
 ifeq ("$(wildcard saori_curl.dll)", "")
-	ln -s libtest.so test.dll
+	ln -s libexample.so example.dll
 endif
 
 libsaori_curl.so: $(SKELETON_OBJS) $(CURL_OBJS)
