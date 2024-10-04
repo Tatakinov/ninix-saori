@@ -45,7 +45,7 @@ namespace base {
                 }
                 std::string getCommand() { return command_; }
                 std::string getProtocol() { return protocol_; }
-                optional& operator[](std::string key) {
+                optional& operator[](const std::string& key) {
                     return header_[key];
                 }
                 optional& operator()() {

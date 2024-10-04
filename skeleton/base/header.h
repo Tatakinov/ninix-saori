@@ -16,15 +16,21 @@ class Header {
         ~Header();
         static Header parse(std::string str);
         static Header parse(std::istringstream& iss);
-        void remove(std::string key);
-        inline optional& operator[](std::string key) { return map_[key]; }
+        void remove(const std::string& key);
+        inline optional& operator[](const std::string& key) { return map_[key]; }
         operator std::string() const {
             std::ostringstream oss;
-            std::for_each(map_.begin(), map_.end(), [&oss](decltype(map_)::value_type pair) {
-                    if (pair.second) {
-                        oss << pair.first << ": " << pair.second.value() << "\x0d\x0a";
-                    }
-            });
+            auto h = map_;
+            // Charsetは他のヘッダより優先する
+            if (h["Charset"]) {
+                oss << "Charset: " << h["Charset"].value();
+                h.erase("Charset");
+            }
+            for (auto& [k, v] : h) {
+                if (v) {
+                    oss << k << ": " << v.value() << "\x0d\x0a";
+                }
+            }
             return oss.str();
         }
     private:

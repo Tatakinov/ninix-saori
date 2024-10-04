@@ -52,7 +52,7 @@ namespace base {
                 int getStatusCode() { return code_; }
                 std::string getStatus() { return status_; }
                 std::string getProtocol() { return protocol_; }
-                optional& operator[](std::string key) {
+                optional& operator[](const std::string& key) {
                     return header_[key];
                 }
                 optional& operator()() {

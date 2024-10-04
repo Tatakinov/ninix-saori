@@ -30,7 +30,7 @@ Header Header::parse(std::istringstream& iss) {
     return tmp;
 }
 
-void Header::remove(std::string key) {
+void Header::remove(const std::string& key) {
     map_.erase(key);
 }
 
