@@ -19,4 +19,4 @@ make install
 
 - saori\_curl: 簡易的なhttpクライアント
 
-- test: テスト用
+- example: 例示用SAORI
