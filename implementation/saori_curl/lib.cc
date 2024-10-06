@@ -9,7 +9,6 @@ size_t write(char *buf, size_t size, size_t nmemb, void *userdata);
 
 class Curl : public Saori {
     private:
-        CURLcode ret_;
         CURL *hnd_;
         std::string buffer_;
 
@@ -34,21 +33,28 @@ class Curl : public Saori {
             curl_easy_setopt(hnd_, CURLOPT_WRITEDATA, this);
             curl_easy_setopt(hnd_, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 
-            ret_ = curl_easy_perform(hnd_);
+            CURLcode ret = curl_easy_perform(hnd_);
 
             curl_easy_cleanup(hnd_);
             hnd_ = NULL;
 
             auto it = std::remove_if(buffer_.begin(), buffer_.end(), [](char c) {
-                return c == '\r' || c == '\n';
+                return c == '\r';
             });
             buffer_.erase(it, buffer_.end());
 
             saori::Response res {200, "OK"};
             res["Charset"] = "UTF-8";
-            res() = buffer_;
-            if (ret_ != CURLE_OK) {
-                res(0) = curl_easy_strerror(ret_);
+            if (ret == CURLE_OK) {
+                res() = "OK";
+            }
+            else {
+                res() = curl_easy_strerror(ret);
+            }
+            std::istringstream iss(buffer_);
+            std::string buf;
+            for (int i = 0; std::getline(iss, buf); i++) {
+                res(i) = buf;
             }
             buffer_.clear();
             return res;
