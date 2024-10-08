@@ -12,9 +12,9 @@
 extern "C" {
 #endif // __cplusplus
 
-long FUNC(LIBRARY_NAME, _multi_load)(char *path, long len);
-int FUNC(LIBRARY_NAME, _multi_unload)(long id);
-char *FUNC(LIBRARY_NAME, _multi_request)(long id, char *request, long *len);
+long FUNC(LIBRARY_NAME, _saori_load)(char *path, long len);
+int FUNC(LIBRARY_NAME, _saori_unload)(long id);
+char *FUNC(LIBRARY_NAME, _saori_request)(long id, char *request, long *len);
 
 #ifdef __cplusplus
 }
