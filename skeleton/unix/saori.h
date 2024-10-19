@@ -18,10 +18,9 @@ char *FUNC(LIBRARY_NAME, _saori_request)(long id, char *request, long *len);
 
 #ifdef __cplusplus
 }
+#endif // __cplusplus
 
 #undef HELPER
 #undef FUNC
-
-#endif // __cplusplus
 
 #endif // UNIX_SAORI_H_
