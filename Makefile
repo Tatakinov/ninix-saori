@@ -32,6 +32,7 @@ endif
 
 .PHONY: install
 install:
+	mkdir -p $(PREFIX)
 	cp lib*.so *.dll $(PREFIX)
 
 .PHONY: clean
