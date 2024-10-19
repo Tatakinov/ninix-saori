@@ -18,7 +18,7 @@ namespace {
     const long kInstanceMax = 1024;
 };
 
-long FUNC(LIBRARY_NAME, _saori__load)(char *path, long len) {
+long FUNC(LIBRARY_NAME, _saori_load)(char *path, long len) {
     long id = 0;
     for (long i = 1; i <= kInstanceMax; i++) {
         if (!map.count(i)) {
@@ -36,7 +36,7 @@ long FUNC(LIBRARY_NAME, _saori__load)(char *path, long len) {
     return id;
 }
 
-int FUNC(LIBRARY_NAME, _saori__unload)(long id) {
+int FUNC(LIBRARY_NAME, _saori_unload)(long id) {
     if (map.count(id)) {
         map[id]->unload();
         map.erase(id);
@@ -44,7 +44,7 @@ int FUNC(LIBRARY_NAME, _saori__unload)(long id) {
     return 1;
 }
 
-char *FUNC(LIBRARY_NAME, _saori__request)(long id, char *request, long *len) {
+char *FUNC(LIBRARY_NAME, _saori_request)(long id, char *request, long *len) {
     if (!map.count(id)) {
         len = 0;
         return NULL;
