@@ -23,7 +23,7 @@ class Header {
             auto h = map_;
             // Charsetは他のヘッダより優先する
             if (h["Charset"]) {
-                oss << "Charset: " << h["Charset"].value();
+                oss << "Charset: " << h["Charset"].value() << "\x0d\x0a";
                 h.erase("Charset");
             }
             for (auto& [k, v] : h) {
