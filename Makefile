@@ -1,5 +1,5 @@
 CXX					= clang++
-CXXFLAGS		= -I . -fPIC -I skeleton -Wall -Ofast -std=c++17
+CXXFLAGS		= -I . -fPIC -I skeleton -Wall -O3 -std=c++17
 LD					= clang++
 LDFLAGS			= -shared
 OBJS				= foo.o
@@ -13,6 +13,7 @@ AOSORA_OBJS		= implementation/saori_aosora/lib.o
 KAWARI_OBJS		= implementation/saori_kawari/lib.o
 SATORI_OBJS		= implementation/saori_satori/lib.o
 YAYA_OBJS		= implementation/saori_yaya/lib.o
+TRANSLATOR_OBJS = implementation/saori_call_translator/lib.o
 ALL					= all
 
 PREFIX=/opt/ninix-kagari/lib/saori/
@@ -20,7 +21,7 @@ PREFIX=/opt/ninix-kagari/lib/saori/
 .SUFFIXES: .cc .o
 
 .PHONY: all
-$(ALL): libexample.so libsaori_curl.so libsaori_aosora.so libsaori_kawari.so libsaori_satori.so libsaori_yaya.so
+$(ALL): libexample.so libsaori_curl.so libsaori_call_translator.so libsaori_aosora.so libsaori_kawari.so libsaori_satori.so libsaori_yaya.so
 
 libexample.so: $(SKELETON_OBJS) $(EXAMPLE_OBJS)
 	$(LD) $(LDFLAGS) -o libexample.so $(EXAMPLE_OBJS) $(SKELETON_OBJS)
@@ -32,6 +33,12 @@ libsaori_curl.so: $(SKELETON_OBJS) $(CURL_OBJS)
 	$(LD) $(LDFLAGS) -o libsaori_curl.so $(CURL_OBJS) $(SKELETON_OBJS) -lcurl
 ifeq ("$(wildcard saori_curl.dll)", "")
 	ln -s libsaori_curl.so saori_curl.dll
+endif
+
+libsaori_call_translator.so: $(SKELETON_OBJS) $(TRANSLATOR_OBJS)
+	$(LD) $(LDFLAGS) -o libsaori_call_translator.so $(TRANSLATOR_OBJS) $(SKELETON_OBJS)
+ifeq ("$(wildcard call_translator.dll)", "")
+	ln -s libsaori_call_translator.so call_translator.dll
 endif
 
 libsaori_aosora.so: $(AOSORA_OBJS)
