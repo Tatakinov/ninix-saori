@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <curl/curl.h>
 
-size_t write(char *buf, size_t size, size_t nmemb, void *userdata);
+size_t write_callback(char *buf, size_t size, size_t nmemb, void *userdata);
 
 class Curl : public Saori {
     private:
@@ -29,7 +29,7 @@ class Curl : public Saori {
             curl_easy_setopt(hnd_, CURLOPT_HTTP_VERSION, (long)CURL_HTTP_VERSION_2TLS);
             curl_easy_setopt(hnd_, CURLOPT_FTP_SKIP_PASV_IP, 1L);
             curl_easy_setopt(hnd_, CURLOPT_TCP_KEEPALIVE, 1L);
-            curl_easy_setopt(hnd_, CURLOPT_WRITEFUNCTION, &write);
+            curl_easy_setopt(hnd_, CURLOPT_WRITEFUNCTION, &write_callback);
             curl_easy_setopt(hnd_, CURLOPT_WRITEDATA, this);
             curl_easy_setopt(hnd_, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
 
@@ -65,7 +65,7 @@ class Curl : public Saori {
         }
 };
 
-size_t write(char *buf, size_t size, size_t nmemb, void *userdata) {
+size_t write_callback(char *buf, size_t size, size_t nmemb, void *userdata) {
     Curl *p = static_cast<Curl *>(userdata);
     std::string b(buf, size * nmemb);
     p->append(b);
