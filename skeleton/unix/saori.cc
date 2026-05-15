@@ -46,7 +46,7 @@ int FUNC(LIBRARY_NAME, _saori_unload)(long id) {
 
 char *FUNC(LIBRARY_NAME, _saori_request)(long id, char *request, long *len) {
     if (!map.count(id)) {
-        len = 0;
+        *len = 0;
         return NULL;
     }
     std::string r(request, *len);
