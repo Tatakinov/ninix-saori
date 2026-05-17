@@ -38,6 +38,46 @@ class ChildProcess {
         }
         bool spawn() {
 #if defined(_WIN32) || defined(WIN32)
+            HANDLE tmp;
+            if (!CreatePipe(&tmp, &p2c_[W], nullptr, 0)) {
+                return false;
+            }
+            DuplicateHandle(GetCurrentProcess(), tmp,
+                    GetCurrentProcess(), &p2c_[R],
+                    0, TRUE, DUPLICATE_SAME_ACCESS);
+            CloseHandle(tmp);
+            if (!CreatePipe(&c2p_[R], &tmp, nullptr, 0)) {
+                CloseHandle(p2c_[R]);
+                CloseHandle(p2c_[W]);
+                return false;
+            }
+            DuplicateHandle(GetCurrentProcess(), tmp,
+                    GetCurrentProcess(), &c2p_[W],
+                    0, TRUE, DUPLICATE_SAME_ACCESS);
+            CloseHandle(tmp);
+            std::ostringstream oss;
+            for (auto &x : args_) {
+                oss << x << " ";
+            }
+            std::string cmd_line = oss.str() + "\0";
+            p_ = std::make_optional<process_t>();
+            STARTUPINFO si;
+            ZeroMemory(&si, sizeof(STARTUPINFO));
+            si.cb = sizeof(STARTUPINFO);
+            si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+            si.wShowWindow = SW_HIDE;
+            si.hStdInput = p2c_[R];
+            si.hStdOutput = c2p_[W];
+            si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+            if (!CreateProcess(nullptr, cmd_line.data(), nullptr, nullptr, TRUE, 0, nullptr, nullptr, &si, &(p_.value()))) {
+                CloseHandle(p2c_[R]);
+                CloseHandle(p2c_[W]);
+                CloseHandle(c2p_[R]);
+                CloseHandle(c2p_[W]);
+                return false;
+            }
+            CloseHandle(p2c_[R]);
+            CloseHandle(c2p_[W]);
 #else
             if (pipe(p2c_)) {
                 return false;
@@ -90,14 +130,18 @@ class ChildProcess {
                 exit(EXIT_FAILURE);
             }
 #endif // OS
+            return true;
         }
         void write(std::string data) {
             if (!p_) {
                 return;
             }
 #if defined(_WIN32) || defined(WIN32)
+            DWORD len = 0;
+            WriteFile(p2c_[W], data.data(), data.length(), &len, nullptr);
+            CloseHandle(p2c_[W]);
 #else
-            std::cout << "write: " << ::write(p2c_[W], data.data(), data.length()) << " " << data << std::endl;
+            ::write(p2c_[W], data.data(), data.length());
             close(p2c_[W]);
 #endif // OS
         }
@@ -106,13 +150,24 @@ class ChildProcess {
                 std::cout << "???" << std::endl;
                 return "";
             }
-            std::ostringstream oss(std::ios::binary);
+            std::ostringstream oss;
             char buffer[1024];
 #if defined(_WIN32) || defined(WIN32)
+            DWORD len = 0;
+            while (true) {
+                if (!ReadFile(c2p_[R], buffer, 1024, &len, nullptr) || len <= 0) {
+                    break;
+                }
+                std::string tmp(buffer, len);
+                oss << tmp;
+            }
+            CloseHandle(c2p_[R]);
+            WaitForSingleObject(p_.value().hProcess, INFINITE);
+            CloseHandle(p_.value().hProcess);
+            CloseHandle(p_.value().hThread);
 #else
             while (true) {
                 ssize_t len = ::read(c2p_[R], buffer, 1024);
-                std::cout << "len:" << len << std::endl;
                 if (len <= 0) {
                     break;
                 }
@@ -125,8 +180,6 @@ class ChildProcess {
 #endif
             p_ = std::nullopt;
             std::string result = oss.str();
-            std::cout << "rrresult" << std::endl;
-            std::cout << result << std::endl;
             return result;
         }
 };

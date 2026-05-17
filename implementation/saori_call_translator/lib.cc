@@ -38,10 +38,8 @@ class CallTranslator : public Saori {
                     oss << req(i).value() << "\n";
                 }
                 std::string src = oss.str();
-                std::cout << config_path << std::endl;
-                std::cout << src << std::endl;
                 std::unique_ptr<ChildProcess> process = std::make_unique<ChildProcess>();
-                if (process->spawn("translator-cli", "--model-config-paths", config_path)) {
+                if (process->spawn("translator-cli.exe", "--model-config-paths", config_path)) {
                     process->write(src);
                     if (th_) {
                         std::unique_lock<std::mutex> lock(mutex_);
@@ -83,10 +81,14 @@ class CallTranslator : public Saori {
                 res["Charset"] = "UTF-8";
                 if (result) {
                     th_->join();
-                    std::istringstream iss(result.value(), std::ios::binary);
+                    th_.reset();
+                    std::istringstream iss(result.value());
                     std::string line;
                     int index = 0;
-                    while (std::getline(iss, line, '\n')) {
+                    while (std::getline(iss, line)) {
+                        if (line.ends_with("\r")) {
+                            line = line.substr(0, line.length() - 1);
+                        }
                         if (line.empty()) {
                             continue;
                         }
@@ -97,7 +99,6 @@ class CallTranslator : public Saori {
                 else {
                     res() = -1;
                 }
-                std::cout << static_cast<std::string>(res) << std::endl;
                 return res;
             }
             saori::Response res {204, "No Content"};
