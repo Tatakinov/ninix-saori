@@ -1,5 +1,5 @@
 CXX					= clang++
-CXXFLAGS		= -I . -fPIC -I skeleton -Wall -O3 -std=c++17
+CXXFLAGS		= -I . -fPIC -I skeleton -Wall -O3 -std=c++20
 LD					= clang++
 LDFLAGS			= -shared
 OBJS				= foo.o
