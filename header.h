@@ -1,10 +1,10 @@
 #ifndef HEADER_H_
 #define HEADER_H_
 
-#include "plugin.h"
-#include "saori.h"
-#include "shiori.h"
-#include "sstp.h"
+#include "skeleton/plugin.h"
+#include "skeleton/saori.h"
+#include "skeleton/shiori.h"
+#include "skeleton/sstp.h"
 
 template<class T, class U>
 class Library {
