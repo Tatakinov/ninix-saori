@@ -1,8 +1,7 @@
 // *必ず*ユニークなSAORI名を定義すること。
 #define LIBRARY_NAME example
 
-// includeするのは.hじゃなくて.cc。
-#include "skeleton/unix/saori.cc"
+#include "skeleton/skeleton.h"
 
 // Saoriを継承すること。
 class Example : public Saori {
