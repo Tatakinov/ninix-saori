@@ -119,6 +119,8 @@ class ChildProcess {
                     close(c2p_[W]);
                     exit(EXIT_FAILURE);
                 }
+                close(p2c_[R]);
+                close(c2p_[W]);
                 std::vector<char *> argv;
                 for (auto &x : args_) {
                     char *tmp = strdup(x.c_str());
@@ -127,6 +129,11 @@ class ChildProcess {
                 argv.push_back(nullptr);
                 execvp(argv[0], argv.data());
                 // error
+                for (char *x : argv) {
+                    free(x);
+                }
+                close(p2c_[W]);
+                close(c2p_[R]);
                 exit(EXIT_FAILURE);
             }
 #endif // OS
@@ -148,7 +155,7 @@ class ChildProcess {
         std::string read() {
             if (!p_) {
                 std::cout << "???" << std::endl;
-                return "";
+                return "failed to translate";
             }
             std::ostringstream oss;
             char buffer[1024];
