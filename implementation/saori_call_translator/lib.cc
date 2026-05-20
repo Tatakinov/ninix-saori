@@ -31,13 +31,25 @@ class CallTranslator : public Saori {
                 return res;
             }
             std::string command = req(0).value();
-            if (command == "call") {
-                std::string config_path = req(1).value();
-                std::ostringstream oss;
-                for (int i = 2; req(i); i++) {
-                    oss << req(i).value() << "\n";
+            if (command == "call" && req(1)) {
+#if defined(_WIN32) || defined(WIN32)
+                std::string config_path;
+                {
+                    std::ostringstream oss;
+                    oss << "\"" << req(1).value() << "\"";
+                    config_path = oss.str();
                 }
-                std::string src = oss.str();
+#else
+                std::string config_path = req(1).value();
+#endif // OS
+                std::string src;
+                {
+                    std::ostringstream oss;
+                    for (int i = 2; req(i); i++) {
+                        oss << req(i).value() << "\n";
+                    }
+                    src = oss.str();
+                }
                 std::unique_ptr<ChildProcess> process = std::make_unique<ChildProcess>();
                 if (process->spawn("translator-cli.exe", "--model-config-paths", config_path)) {
                     process->write(src);
@@ -68,7 +80,7 @@ class CallTranslator : public Saori {
                     return res;
                 }
             }
-            else if (command == "result") {
+            if (command == "result") {
                 std::optional<std::string> result;
                 {
                     std::unique_lock<std::mutex> lock(mutex_);
@@ -80,8 +92,10 @@ class CallTranslator : public Saori {
                 saori::Response res {200, "OK"};
                 res["Charset"] = "UTF-8";
                 if (result) {
-                    th_->join();
-                    th_.reset();
+                    if (th_) {
+                        th_->join();
+                        th_.reset();
+                    }
                     std::istringstream iss(result.value());
                     std::string line;
                     int index = 0;
